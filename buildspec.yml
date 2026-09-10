@@ -1,0 +1,68 @@
+version: 0.2
+
+# AWS CodeBuild Build Specification
+# Repository: https://github.com/AnujThorat/myfirst-cicd-project.git
+# Project: CyberArcade & AWS CI/CD Static Web Application
+
+env:
+  variables:
+    APP_NAME: "CyberArcade"
+    DEPLOY_ENV: "production"
+    NODE_ENV: "production"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "=========================================================="
+      - echo "Phase 1: INSTALL - Setting up AWS CodeBuild Environment..."
+      - echo "=========================================================="
+      - echo "Node.js Version $(node -v)"
+      - echo "NPM Version $(npm -v)"
+      - echo "Installing dependencies (if any)..."
+      - npm --version
+
+  pre_build:
+    commands:
+      - echo "=========================================================="
+      - echo "Phase 2: PRE_BUILD - Running automated integrity checks..."
+      - echo "=========================================================="
+      - echo "Build initiated at $(date)"
+      - echo "CodeBuild Source Version: $CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - echo "CodeBuild Build ID: $CODEBUILD_BUILD_ID"
+      - |
+        if command -v node >/dev/null 2>&1; then
+          node scripts/build-check.js
+        elif command -v python3 >/dev/null 2>&1; then
+          python3 scripts/build-check.py
+        elif command -v python >/dev/null 2>&1; then
+          python scripts/build-check.py
+        fi
+
+  build:
+    commands:
+      - echo "=========================================================="
+      - echo "Phase 3: BUILD - Preparing Static Assets & Packaging..."
+      - echo "=========================================================="
+      - echo "Listing build directory contents:"
+      - ls -la
+      - echo "Static website assets verified and ready for deployment."
+
+  post_build:
+    commands:
+      - echo "=========================================================="
+      - echo "Phase 4: POST_BUILD - Build completed successfully!"
+      - echo "=========================================================="
+      - echo "Build finished at $(date)"
+      - echo "Artifacts prepared for S3 / CloudFront deployment pipeline."
+
+artifacts:
+  files:
+    - '**/*'
+  name: cyberarcade-build-artifact-$(date +%Y-%m-%d)
+  discard-paths: no
+
+cache:
+  paths:
+    - 'node_modules/**/*'

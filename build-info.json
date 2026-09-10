@@ -1,0 +1,9 @@
+﻿{
+    "appName":  "CyberArcade \u0026 AWS CI/CD Hub",
+    "version":  "1.0.0",
+    "buildTimestamp":  "2026-09-10T10:37:17Z",
+    "environment":  "Local-Dev",
+    "codebuildBuildId":  "local-build-id",
+    "sourceVersion":  "main-latest",
+    "status":  "SUCCESS"
+}

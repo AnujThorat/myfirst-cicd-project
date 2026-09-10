@@ -1,0 +1,307 @@
+/* ==========================================================================
+   CYBERARCADE - GAMES & INTERACTIVE COMPONENTS STYLESHEET
+   ========================================================================== */
+
+/* Game Arena Wrapper */
+.arcade-viewport-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CRT Scanline Retro Effect (Toggleable) */
+.crt-overlay::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 10;
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Game HUD Top Bar */
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hud-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.hud-value {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cyan-neon);
+}
+
+.hud-value.highlight-pink {
+  color: var(--pink-neon);
+}
+
+.hud-value.highlight-green {
+  color: var(--green-neon);
+}
+
+/* Canvas Container */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 480px;
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--cyan-neon);
+  box-shadow: var(--glow-cyan);
+  background: #020307;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Game Overlay Screen (Start / Game Over) */
+.game-overlay-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(4, 6, 15, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  z-index: 20;
+}
+
+.game-overlay-screen.hidden {
+  display: none !important;
+}
+
+.overlay-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fff, var(--cyan-neon), var(--pink-neon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.overlay-score-display {
+  font-size: 1.3rem;
+  color: var(--green-neon);
+  font-family: var(--font-mono);
+  margin: 1rem 0;
+}
+
+.overlay-instructions {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  max-width: 450px;
+  margin-bottom: 1.5rem;
+}
+
+.key-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-glow);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--cyan-neon);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin: 0 3px;
+}
+
+/* Touch On-Screen Controls for Mobile */
+.touch-controls {
+  display: none;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 1rem auto 0;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .touch-controls {
+    display: flex;
+  }
+}
+
+.touch-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  color: var(--cyan-neon);
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.touch-btn:active {
+  background: rgba(0, 240, 255, 0.3);
+  transform: scale(0.95);
+}
+
+/* ==========================================================================
+   GAME 2: QUANTUM MEMORY HACKER STYLES
+   ========================================================================== */
+.memory-board-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.memory-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.matrix-tile {
+  aspect-ratio: 1 / 1;
+  background: rgba(20, 26, 45, 0.7);
+  border: 2px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  color: var(--cyan-neon);
+  user-select: none;
+}
+
+.matrix-tile:hover {
+  border-color: var(--cyan-neon);
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: var(--glow-cyan);
+  transform: scale(1.04);
+}
+
+.matrix-tile.active-flash {
+  background: var(--cyan-neon) !important;
+  color: #000 !important;
+  box-shadow: 0 0 25px var(--cyan-neon) !important;
+  transform: scale(1.08);
+}
+
+.matrix-tile.correct-match {
+  border-color: var(--green-neon) !important;
+  background: rgba(0, 255, 136, 0.2) !important;
+  color: var(--green-neon) !important;
+  box-shadow: var(--glow-green) !important;
+}
+
+.matrix-tile.wrong-match {
+  border-color: var(--red-neon) !important;
+  background: rgba(255, 51, 102, 0.2) !important;
+  color: var(--red-neon) !important;
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.6) !important;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.tile-symbol {
+  font-size: 1.8rem;
+  margin-bottom: 2px;
+}
+
+.tile-code {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* Leaderboard Card */
+.leaderboard-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.rank-badge {
+  font-weight: 800;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  margin-right: 0.6rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.rank-badge.gold { background: #ffd700; color: #000; }
+.rank-badge.silver { background: #c0c0c0; color: #000; }
+.rank-badge.bronze { background: #cd7f32; color: #fff; }
+
+.leaderboard-score {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--cyan-neon);
+}

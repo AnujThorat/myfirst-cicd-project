@@ -1,0 +1,23 @@
+{
+  "name": "cyberarcade-cicd-app",
+  "version": "1.0.0",
+  "description": "CyberArcade & AWS CI/CD Static Web Application with AWS CodeBuild integration",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "test": "node scripts/build-check.js",
+    "validate": "node scripts/build-check.js",
+    "build": "node scripts/build-check.js"
+  },
+  "keywords": [
+    "aws-codebuild",
+    "aws-codepipeline",
+    "cicd",
+    "static-website",
+    "arcade-game",
+    "html5-canvas",
+    "web-audio-api"
+  ],
+  "author": "Anuj Thorat",
+  "license": "MIT"
+}
