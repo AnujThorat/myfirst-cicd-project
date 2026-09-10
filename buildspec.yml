@@ -1,68 +1,52 @@
 version: 0.2
 
-# AWS CodeBuild Build Specification
-# Repository: https://github.com/AnujThorat/myfirst-cicd-project.git
-# Project: CyberArcade & AWS CI/CD Static Web Application
+# AWS CodeBuild Specification for Direct S3 Deployment
+# Required CodeBuild Environment Variable:
+#   - S3_BUCKET: Name of your destination S3 bucket
 
 env:
   variables:
     APP_NAME: "CyberArcade"
-    DEPLOY_ENV: "production"
-    NODE_ENV: "production"
 
 phases:
   install:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "=========================================================="
-      - echo "Phase 1: INSTALL - Setting up AWS CodeBuild Environment..."
-      - echo "=========================================================="
-      - echo "Node.js Version $(node -v)"
-      - echo "NPM Version $(npm -v)"
-      - echo "Installing dependencies (if any)..."
-      - npm --version
+      - echo "Checking environment..."
+      - aws --version
+      - node -v
+      - |
+        if [ -f package.json ]; then
+          echo "Installing dependencies..."
+          npm ci || npm install
+        fi
 
   pre_build:
     commands:
-      - echo "=========================================================="
-      - echo "Phase 2: PRE_BUILD - Running automated integrity checks..."
-      - echo "=========================================================="
-      - echo "Build initiated at $(date)"
-      - echo "CodeBuild Source Version: $CODEBUILD_RESOLVED_SOURCE_VERSION"
-      - echo "CodeBuild Build ID: $CODEBUILD_BUILD_ID"
+      - echo "Running verification suite..."
       - |
-        if command -v node >/dev/null 2>&1; then
+        if [ -f scripts/build-check.js ]; then
           node scripts/build-check.js
-        elif command -v python3 >/dev/null 2>&1; then
-          python3 scripts/build-check.py
-        elif command -v python >/dev/null 2>&1; then
-          python scripts/build-check.py
         fi
 
   build:
     commands:
-      - echo "=========================================================="
-      - echo "Phase 3: BUILD - Preparing Static Assets & Packaging..."
-      - echo "=========================================================="
-      - echo "Listing build directory contents:"
-      - ls -la
-      - echo "Static website assets verified and ready for deployment."
+      - echo "Syncing files to S3 bucket: $S3_BUCKET"
+      - |
+        if [ -n "$S3_BUCKET" ]; then
+          aws s3 sync . s3://$S3_BUCKET --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
+          echo "S3 sync completed successfully!"
+        else
+          echo "Error: S3_BUCKET environment variable is not set."
+          exit 1
+        fi
 
   post_build:
     commands:
-      - echo "=========================================================="
-      - echo "Phase 4: POST_BUILD - Build completed successfully!"
-      - echo "=========================================================="
-      - echo "Build finished at $(date)"
-      - echo "Artifacts prepared for S3 / CloudFront deployment pipeline."
+      - echo "Deployment completed at $(date)"
 
 artifacts:
   files:
     - '**/*'
-  name: cyberarcade-build-artifact-$(date +%Y-%m-%d)
   discard-paths: no
-
-cache:
-  paths:
-    - 'node_modules/**/*'
