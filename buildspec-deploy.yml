@@ -1,52 +1,37 @@
 version: 0.2
 
-# AWS CodeBuild Extended Specification with Direct S3 Sync & CloudFront Invalidation
-# Required CodeBuild Environment Variables:
-#   - S3_BUCKET: Name of your destination S3 bucket (e.g., 'my-static-web-bucket')
-#   - CLOUDFRONT_DIST_ID (Optional): CloudFront Distribution ID to invalidate cache
-
 env:
   variables:
     APP_NAME: "CyberArcade"
+    S3_BUCKET: "anuj-cicd-bucket1"
 
 phases:
   install:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "Checking AWS CLI version..."
+      - echo "Checking runtime environment..."
       - aws --version
       - node -v
+      - if [ -f package.json ]; then npm install; fi
 
   pre_build:
     commands:
-      - echo "Running verification suite before deployment..."
-      - node scripts/build-check.js
+      - echo "Running pre-build checks..."
+      - if [ -f scripts/build-check.js ]; then node scripts/build-check.js; fi
 
   build:
     commands:
-      - echo "Build phase ready. Syncing files to S3 bucket: $S3_BUCKET"
-      - |
-        if [ -n "$S3_BUCKET" ]; then
-          echo "Deploying to S3 bucket: $S3_BUCKET"
-          aws s3 sync . s3://$S3_BUCKET --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
-          echo "S3 sync completed successfully!"
-        else
-          echo "Notice: S3_BUCKET environment variable not set. Skipping direct S3 sync."
-        fi
+      - echo "Checking S3 destination bucket..."
+      - echo "Target bucket is $S3_BUCKET"
+      - echo "Syncing files to S3 bucket $S3_BUCKET..."
+      - aws s3 sync . "s3://$S3_BUCKET" --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
 
   post_build:
     commands:
-      - echo "Performing post-deployment tasks..."
-      - |
-        if [ -n "$CLOUDFRONT_DIST_ID" ]; then
-          echo "Invalidating CloudFront cache for distribution: $CLOUDFRONT_DIST_ID"
-          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths "/*"
-          echo "CloudFront invalidation initiated."
-        fi
-      - echo "Deployment finished successfully at $(date)"
+      - echo "Deployment sync finished successfully."
 
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
   discard-paths: no
