@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     APP_NAME: "CyberArcade"
+    S3_BUCKET: "anuj-cicd-bucket1"
 
 phases:
   install:
@@ -12,7 +13,7 @@ phases:
       - echo "Checking runtime environment..."
       - aws --version
       - node -v
-      - if [ -f package.json ]; then npm ci || npm install; fi
+      - if [ -f package.json ]; then npm install; fi
 
   pre_build:
     commands:
@@ -22,7 +23,7 @@ phases:
   build:
     commands:
       - echo "Checking S3 destination bucket..."
-      - test -n "$S3_BUCKET"
+      - echo "Target bucket is $S3_BUCKET"
       - echo "Syncing files to S3 bucket $S3_BUCKET..."
       - aws s3 sync . "s3://$S3_BUCKET" --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
 
