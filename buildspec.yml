@@ -1,9 +1,5 @@
 version: 0.2
 
-# AWS CodeBuild Specification for Direct S3 Deployment
-# Required CodeBuild Environment Variable:
-#   - S3_BUCKET: Name of your destination S3 bucket
-
 env:
   variables:
     APP_NAME: "CyberArcade"
@@ -13,40 +9,28 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "Checking environment..."
+      - echo "Checking runtime environment..."
       - aws --version
       - node -v
-      - |
-        if [ -f package.json ]; then
-          echo "Installing dependencies..."
-          npm ci || npm install
-        fi
+      - if [ -f package.json ]; then npm ci || npm install; fi
 
   pre_build:
     commands:
-      - echo "Running verification suite..."
-      - |
-        if [ -f scripts/build-check.js ]; then
-          node scripts/build-check.js
-        fi
+      - echo "Running pre-build checks..."
+      - if [ -f scripts/build-check.js ]; then node scripts/build-check.js; fi
 
   build:
     commands:
-      - echo "Syncing files to S3 bucket: $S3_BUCKET"
-      - |
-        if [ -n "$S3_BUCKET" ]; then
-          aws s3 sync . s3://$S3_BUCKET --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
-          echo "S3 sync completed successfully!"
-        else
-          echo "Error: S3_BUCKET environment variable is not set."
-          exit 1
-        fi
+      - echo "Checking S3 destination bucket..."
+      - test -n "$S3_BUCKET"
+      - echo "Syncing files to S3 bucket $S3_BUCKET..."
+      - aws s3 sync . "s3://$S3_BUCKET" --delete --exclude ".git/*" --exclude "node_modules/*" --exclude "buildspec*.yml"
 
   post_build:
     commands:
-      - echo "Deployment completed at $(date)"
+      - echo "Deployment sync finished successfully."
 
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
   discard-paths: no
