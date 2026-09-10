@@ -1,7 +1,6 @@
 version: 0.2
 
 # AWS CodeBuild Extended Specification with Direct S3 Sync & CloudFront Invalidation
-# Use this buildspec if you want CodeBuild to deploy directly to your AWS S3 bucket.
 # Required CodeBuild Environment Variables:
 #   - S3_BUCKET: Name of your destination S3 bucket (e.g., 'my-static-web-bucket')
 #   - CLOUDFRONT_DIST_ID (Optional): CloudFront Distribution ID to invalidate cache
@@ -9,9 +8,6 @@ version: 0.2
 env:
   variables:
     APP_NAME: "CyberArcade"
-  # Set these in CodeBuild console or AWS Secrets Manager:
-  # parameter-store:
-  #   S3_BUCKET: "/cicd/s3_bucket_name"
 
 phases:
   install:
